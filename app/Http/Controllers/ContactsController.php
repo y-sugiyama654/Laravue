@@ -8,6 +8,11 @@ use Illuminate\Http\Request;
 
 class ContactsController extends Controller
 {
+    /**
+     * contactデータの登録処理
+     *
+     * @param ContactsRequest $request
+     */
     public function store(ContactsRequest $request)
     {
         Contact::create([

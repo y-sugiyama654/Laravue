@@ -16,12 +16,7 @@ class ContactsTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $this->post('/api/contacts', [
-            'name'     => 'Test Name',
-            'email'    => 'test@gmail.com',
-            'birthday' => '05/15/2020',
-            'company'  => 'ABC Company',
-        ]);
+        $this->post('/api/contacts', $this->data());
 
         $contact = Contact::first();
 
@@ -31,35 +26,30 @@ class ContactsTest extends TestCase
         $this->assertEquals('ABC Company', $contact->company);
     }
 
+
     /** @test */
-    public function a_name_is_required()
+    public function fields_are_required()
     {
-        $response = $this->post('/api/contacts', [
+        collect(['name', 'email', 'birthday', 'company'])
+            ->each(function($field) {
+
+                $response = $this->post('/api/contacts', array_merge($this->data(), [$field => '']));
+
+                // nameキーのエラーがセッションに含まれているか
+                $response->assertSessionHasErrors($field);
+
+                // contactテーブルにデータが存在しないこと
+                $this->assertCount(0, Contact::all());
+            });
+    }
+
+    private function data()
+    {
+        return [
+            'name'     => 'Test Name',
             'email'    => 'test@gmail.com',
             'birthday' => '05/15/2020',
             'company'  => 'ABC Company',
-        ]);
-
-        // nameキーのエラーがセッションに含まれているか
-        $response->assertSessionHasErrors('name');
-
-        // contactテーブルにデータが存在しないこと
-        $this->assertCount(0, Contact::all());
-    }
-
-    /** @test */
-    public function a_email_is_required()
-    {
-        $response = $this->post('/api/contacts', [
-            'name'     => 'Test Name',
-            'birthday' => '05/15/2020',
-            'company'  => 'ABC Company',
-        ]);
-
-        // emailキーのエラーがセッションに含まれているか
-        $response->assertSessionHasErrors('email');
-
-        // contactテーブルにデータが存在しないこと
-        $this->assertCount(0, Contact::all());
+        ];
     }
 }
