@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Contact;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -22,7 +23,7 @@ class ContactsTest extends TestCase
 
         $this->assertEquals('Test Name', $contact->name);
         $this->assertEquals('test@gmail.com', $contact->email);
-        $this->assertEquals('05/15/2020', $contact->birthday);
+        $this->assertEquals('05/15/2020', $contact->birthday->format('m/d/Y'));
         $this->assertEquals('ABC Company', $contact->company);
     }
 
@@ -41,6 +42,31 @@ class ContactsTest extends TestCase
                 // contactテーブルにデータが存在しないこと
                 $this->assertCount(0, Contact::all());
             });
+    }
+
+    /** @test */
+    public function email_must_be_a_valid_email()
+    {
+        $response = $this->post('/api/contacts', array_merge($this->data(), ['email' => 'NOT AN EMAIL']));
+
+        // nameキーのエラーがセッションに含まれているか
+        $response->assertSessionHasErrors('email');
+
+        // contactテーブルにデータが存在しないこと
+        $this->assertCount(0, Contact::all());
+    }
+
+    /** @test */
+    public function birthday_are_properly_stored()
+    {
+        $response = $this->post('/api/contacts', array_merge($this->data()));
+
+        // contactテーブルにデータが1つ存在すること
+        $this->assertCount(1, Contact::all());
+        // birthdayがCarbonのインスタンスであること
+        $this->assertInstanceOf(Carbon::class, Contact::first()->birthday);
+        // フォーマット通りにデータが保存されていること
+        $this->assertEquals('2020-05-15', Contact::first()->birthday->format('Y-m-d'));
     }
 
     private function data()
