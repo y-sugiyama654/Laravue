@@ -69,6 +69,23 @@ class ContactsTest extends TestCase
         $this->assertEquals('2020-05-15', Contact::first()->birthday->format('Y-m-d'));
     }
 
+    /** @test */
+    public function a_contact_can_be_retrieved()
+    {
+        // contactデータをfactoryから取得
+        $contact = factory(Contact::class)->create();
+
+        $response = $this->get('/api/contacts/' . $contact->id);
+
+        // レスポンスが指定したJSONの一部を含んでいること
+        $response->assertJson([
+            'name'     => $contact->name,
+            'email'    => $contact->email,
+            'birthday' => $contact->birthday->format('Y-m-d\TH:i:s.\0\0\0\0\0\0\Z'),
+            'company'  => $contact->company,
+        ]);
+    }
+
     private function data()
     {
         return [
