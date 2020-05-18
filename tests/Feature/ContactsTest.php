@@ -86,6 +86,47 @@ class ContactsTest extends TestCase
         ]);
     }
 
+    /** @test */
+    public function a_contact_can_be_patched()
+    {
+        $this->withoutExceptionHandling();
+
+        // contactデータをfactoryから作成
+        $contact = factory(Contact::class)->create();
+
+        // 編集前のcontactデータ
+        // App\User
+        // {    #2976
+        //      id:       1,
+        //      name:     "Satoshi Nakamoto",
+        //      email:    "satoshi@gmail.com",
+        //      birthday: "05/04/1994",
+        //      company:  "BitCoin Inc",
+        // }
+
+        // patchメソッドで取得したデータを第二引数のデータに編集
+        $this->patch('/api/contacts/' . $contact->id, $this->data());
+
+        // 編集後のcontactデータ
+        // App\User
+        // {    #2976
+        //      id:       1,
+        //      name:     "Test Name",
+        //      email:    "test@gmail.com",
+        //      birthday: "05/15/2020",
+        //      company:  "ABC Company",
+        // }
+
+        // データベースからモデルを再取得する。既存のモデルインスタンスは影響を受けない。
+        $contact = $contact->fresh();
+
+        // contactデータが編集後のデータに書き換わっていること
+        $this->assertEquals('Test Name', $contact->name);
+        $this->assertEquals('test@gmail.com', $contact->email);
+        $this->assertEquals('05/15/2020', $contact->birthday->format('m/d/Y'));
+        $this->assertEquals('ABC Company', $contact->company);
+    }
+
     private function data()
     {
         return [
