@@ -52,4 +52,15 @@ class ContactsController extends Controller
 
         $contact->update($updateData);
     }
+
+    /**
+     * ccontactデータの削除処理
+     *
+     * @param Contact $contact
+     * @throws \Exception
+     */
+    public function destroy(Contact $contact)
+    {
+        $contact->delete();
+    }
 }

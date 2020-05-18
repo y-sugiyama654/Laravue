@@ -127,6 +127,20 @@ class ContactsTest extends TestCase
         $this->assertEquals('ABC Company', $contact->company);
     }
 
+    /** @test */
+    public function a_contact_can_be_deleted()
+    {
+        $this->withoutExceptionHandling();
+
+        // contactデータをfactoryから取得
+        $contact = factory(Contact::class)->create();
+
+        $response = $this->delete('/api/contacts/' . $contact->id);
+
+        // contactテーブルにデータが存在しないこと
+        $this->assertCount(0, Contact::all());
+    }
+
     private function data()
     {
         return [
