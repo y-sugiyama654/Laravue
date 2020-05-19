@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Contact;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -12,10 +13,28 @@ class ContactsTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    public function a_contact_can_be_added()
+    protected $user;
+
+    protected function setUp() :void
     {
-        $this->withoutExceptionHandling();
+        parent::setUp();
+
+        $this->user = factory(User::class)->create();
+    }
+
+    /** @test */
+    public function an_unauthenticated_user_should_redirected_to_login()
+    {
+        $response = $this->post('/api/contacts', array_merge($this->data(), ['api_token' => '']));
+
+        $response->assertRedirect('/login');
+        $this->assertCount(0, Contact::all());
+    }
+
+    /** @test */
+    public function an_unauthenticated_user_can_add_a_contact()
+    {
+        $user = factory(User::class)->create();
 
         $this->post('/api/contacts', $this->data());
 
@@ -26,7 +45,6 @@ class ContactsTest extends TestCase
         $this->assertEquals('05/15/2020', $contact->birthday->format('m/d/Y'));
         $this->assertEquals('ABC Company', $contact->company);
     }
-
 
     /** @test */
     public function fields_are_required()
@@ -75,7 +93,8 @@ class ContactsTest extends TestCase
         // contactデータをfactoryから取得
         $contact = factory(Contact::class)->create();
 
-        $response = $this->get('/api/contacts/' . $contact->id);
+        // GETメソッドだからURLのapi_tokenを含める
+        $response = $this->get('/api/contacts/' . $contact->id . '?api_token=' . $this->user->api_token);
 
         // レスポンスが指定したJSONの一部を含んでいること
         $response->assertJson([
@@ -135,7 +154,7 @@ class ContactsTest extends TestCase
         // contactデータをfactoryから取得
         $contact = factory(Contact::class)->create();
 
-        $response = $this->delete('/api/contacts/' . $contact->id);
+        $response = $this->delete('/api/contacts/' . $contact->id, ['api_token' => $this->user->api_token]);
 
         // contactテーブルにデータが存在しないこと
         $this->assertCount(0, Contact::all());
@@ -144,10 +163,11 @@ class ContactsTest extends TestCase
     private function data()
     {
         return [
-            'name'     => 'Test Name',
-            'email'    => 'test@gmail.com',
-            'birthday' => '05/15/2020',
-            'company'  => 'ABC Company',
+            'name'       => 'Test Name',
+            'email'      => 'test@gmail.com',
+            'birthday'   => '05/15/2020',
+            'company'    => 'ABC Company',
+            'api_token'  => $this->user->api_token,
         ];
     }
 }
