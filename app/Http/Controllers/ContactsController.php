@@ -27,6 +27,7 @@ class ContactsController extends Controller
      */
     public function show(Contact $contact)
     {
+        // リクエストのユーザーとContactに紐づくUserが紐づかない場合はステータスコード403を返す
         if (request()->user()->isNot($contact->user)) {
             return response([], 403);
         }
@@ -40,12 +41,14 @@ class ContactsController extends Controller
      */
     public function store(ContactsRequest $request)
     {
-        Contact::create([
+        $saveData = [
             'name'     => $request->name,
             'email'    => $request->email,
             'birthday' => $request->birthday,
             'company'  => $request->company,
-        ]);
+        ];
+
+        $request->user()->contacts()->create($saveData);
     }
 
     /**
@@ -56,6 +59,11 @@ class ContactsController extends Controller
      */
     public function update(Contact $contact, ContactsRequest $request)
     {
+        // リクエストのユーザーとContactに紐づくUserが紐づかない場合はステータスコード403を返す
+        if (request()->user()->isNot($contact->user)) {
+            return response([], 403);
+        }
+
         $updateData = [
             'name'     => $request->name,
             'email'    => $request->email,
@@ -74,6 +82,10 @@ class ContactsController extends Controller
      */
     public function destroy(Contact $contact)
     {
+        // リクエストのユーザーとContactに紐づくUserが紐づかない場合はステータスコード403を返す
+        if (request()->user()->isNot($contact->user)) {
+            return response([], 403);
+        }
         $contact->delete();
     }
 }
