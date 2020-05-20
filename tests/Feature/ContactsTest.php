@@ -51,8 +51,6 @@ class ContactsTest extends TestCase
     /** @test */
     public function an_unauthenticated_user_can_add_a_contact()
     {
-        $user = factory(User::class)->create();
-
         $this->post('/api/contacts', $this->data());
 
         $contact = Contact::first();
@@ -140,10 +138,8 @@ class ContactsTest extends TestCase
     /** @test */
     public function a_contact_can_be_patched()
     {
-        $this->withoutExceptionHandling();
-
         // contactデータをfactoryから作成
-        $contact = factory(Contact::class)->create();
+        $contact = factory(Contact::class)->create(['user_id' => $this->user->id]);
 
         // 編集前のcontactデータ
         // App\User
@@ -179,17 +175,46 @@ class ContactsTest extends TestCase
     }
 
     /** @test */
-    public function a_contact_can_be_deleted()
+    public function only_the_owner_of_the_contact_can_patch_the_contact()
     {
-        $this->withoutExceptionHandling();
-
-        // contactデータをfactoryから取得
+        // contactデータをfactoryから作成
         $contact = factory(Contact::class)->create();
 
-        $response = $this->delete('/api/contacts/' . $contact->id, ['api_token' => $this->user->api_token]);
+        // Contactとは紐づかない別のユーザーを作成
+        $anotherUser = factory(User::class)->create();
+
+        // patchメソッドで取得したデータを第二引数のデータに編集
+        $response = $this->patch('/api/contacts/' . $contact->id, array_merge($this->data(), ['api_token' => $anotherUser->api_token]));
+
+        $response->assertStatus(403);
+
+    }
+
+    /** @test */
+    public function a_contact_can_be_deleted()
+    {
+        // contactデータをfactoryから取得
+        $contact = factory(Contact::class)->create(['user_id' => $this->user->id]);
+
+        // deleteメソッドを送信してContactを削除
+        $this->delete('/api/contacts/' . $contact->id, ['api_token' => $this->user->api_token]);
 
         // contactテーブルにデータが存在しないこと
         $this->assertCount(0, Contact::all());
+    }
+
+    /** @test */
+    public function only_the_owner_can_delete_the_contact()
+    {
+        // contactデータをfactoryから取得
+        $contact = factory(Contact::class)->create();
+
+        // Contactとは紐づかない別のユーザーを作成
+        $anotherUser = factory(User::class)->create();
+
+        $response = $this->delete('/api/contacts/' . $contact->id, ['api_token' => $anotherUser->api_token]);
+
+        $response->assertStatus(403);
     }
 
     private function data()
