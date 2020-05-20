@@ -8,6 +8,16 @@ use Illuminate\Http\Request;
 
 class ContactsController extends Controller
 {
+    /**
+     * contact一覧データの表示
+     *
+     * @param Request $request
+     * @return Contact
+     */
+    public function index(Request $request)
+    {
+        return $request->user()->contacts;
+    }
 
     /**
      * contactデータの表示
