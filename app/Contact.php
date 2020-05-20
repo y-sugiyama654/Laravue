@@ -17,4 +17,14 @@ class Contact extends Model
         // DB保存時にbirthdayをCarbonでパースしてミュテートする
         $this->attributes['birthday'] = Carbon::parse($birthday);
     }
+
+    /**
+     * Contactに紐づくUserを取得
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

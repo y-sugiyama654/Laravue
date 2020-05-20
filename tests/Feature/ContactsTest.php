@@ -108,7 +108,7 @@ class ContactsTest extends TestCase
     public function a_contact_can_be_retrieved()
     {
         // contactデータをfactoryから取得
-        $contact = factory(Contact::class)->create();
+        $contact = factory(Contact::class)->create(['user_id' => $this->user->id]);
 
         // GETメソッドだからURLのapi_tokenを含める
         $response = $this->get('/api/contacts/' . $contact->id . '?api_token=' . $this->user->api_token);
@@ -120,6 +120,21 @@ class ContactsTest extends TestCase
             'birthday' => $contact->birthday->format('Y-m-d\TH:i:s.\0\0\0\0\0\0\Z'),
             'company'  => $contact->company,
         ]);
+    }
+
+    /** @test */
+    public function only_the_users_contacts_can_be_retrieved()
+    {
+        // contactデータをfactoryから取得
+        $contact = factory(Contact::class)->create(['user_id' => $this->user->id]);
+
+        $anotherUser = factory(User::class)->create();
+
+        // $contactに紐づかないユーザー($anotherUser)からのレスポンスでGETメソッドを送る
+        $response = $this->get('/api/contacts/' . $contact->id . '?api_token=' . $anotherUser->api_token);
+
+        // 紐づいていないデータなのでステータスは403であること
+        $response->assertStatus(403);
     }
 
     /** @test */
