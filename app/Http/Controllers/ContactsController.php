@@ -16,6 +16,8 @@ class ContactsController extends Controller
      */
     public function index(Request $request)
     {
+        $this->authorize('viewAny', Contact::class);
+
         return $request->user()->contacts;
     }
 
@@ -28,9 +30,8 @@ class ContactsController extends Controller
     public function show(Contact $contact)
     {
         // リクエストのユーザーとContactに紐づくUserが紐づかない場合はステータスコード403を返す
-        if (request()->user()->isNot($contact->user)) {
-            return response([], 403);
-        }
+        $this->authorize('view', $contact);
+
         return $contact;
     }
 
@@ -41,6 +42,8 @@ class ContactsController extends Controller
      */
     public function store(ContactsRequest $request)
     {
+        $this->authorize('create', Contact::class);
+
         $saveData = [
             'name'     => $request->name,
             'email'    => $request->email,
@@ -60,9 +63,7 @@ class ContactsController extends Controller
     public function update(Contact $contact, ContactsRequest $request)
     {
         // リクエストのユーザーとContactに紐づくUserが紐づかない場合はステータスコード403を返す
-        if (request()->user()->isNot($contact->user)) {
-            return response([], 403);
-        }
+        $this->authorize('update', $contact);
 
         $updateData = [
             'name'     => $request->name,
@@ -83,9 +84,8 @@ class ContactsController extends Controller
     public function destroy(Contact $contact)
     {
         // リクエストのユーザーとContactに紐づくUserが紐づかない場合はステータスコード403を返す
-        if (request()->user()->isNot($contact->user)) {
-            return response([], 403);
-        }
+        $this->authorize('delete', $contact);
+
         $contact->delete();
     }
 }
