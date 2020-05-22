@@ -34,9 +34,14 @@ class ContactsTest extends TestCase
         $anotherContact = factory(Contact::class)->create(['user_id' => $anotherUser->id]);
 
         $response = $this->get('/api/contacts?api_token=' . $user->api_token);
+
         // $userのみのデータ($anotherUserは含まれない)が取得できること
         $response->assertJsonCount(1)
-            ->assertJson([['id' => $contact->id]]);
+            ->assertJson([
+                'data' => [
+                    ['contact_id' => $contact->id]
+                ]
+            ]);
     }
 
     /** @test */
@@ -113,10 +118,14 @@ class ContactsTest extends TestCase
 
         // レスポンスが指定したJSONの一部を含んでいること
         $response->assertJson([
-            'name'     => $contact->name,
-            'email'    => $contact->email,
-            'birthday' => $contact->birthday->format('Y-m-d\TH:i:s.\0\0\0\0\0\0\Z'),
-            'company'  => $contact->company,
+            'data' => [
+                'contact_id'   => $contact->id,
+                'name'         => $contact->name,
+                'email'        => $contact->email,
+                'birthday'     => $contact->birthday->format('d/m/Y'),
+                'company'      => $contact->company,
+                'last_updated' => $contact->updated_at->diffForHumans(),
+            ]
         ]);
     }
 
