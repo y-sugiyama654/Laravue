@@ -6,6 +6,7 @@ use App\Contact;
 use App\Http\Requests\ContactsRequest;
 use App\Http\Resources\Contact as ContactResource;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class ContactsController extends Controller
 {
@@ -52,7 +53,13 @@ class ContactsController extends Controller
             'company'  => $request->company,
         ];
 
-        $request->user()->contacts()->create($saveData);
+        // createした後にContactモデルを返すので$contactに保存
+        $contact = $request->user()->contacts()->create($saveData);
+
+        // 保存したContactのAPIリソースとステータスコード201を返す
+        return (new ContactResource($contact))
+            ->response()
+            ->setStatusCode(Response::HTTP_CREATED);
     }
 
     /**
