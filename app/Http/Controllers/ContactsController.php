@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Contact;
 use App\Http\Requests\ContactsRequest;
+use App\Http\Resources\Contact as ContactResource;
 use Illuminate\Http\Request;
 
 class ContactsController extends Controller
@@ -18,21 +19,21 @@ class ContactsController extends Controller
     {
         $this->authorize('viewAny', Contact::class);
 
-        return $request->user()->contacts;
+        return ContactResource::collection( $request->user()->contacts);
     }
 
     /**
      * contactデータの表示
      *
      * @param Contact $contact
-     * @return Contact
+     * @return ContactResource
      */
     public function show(Contact $contact)
     {
         // リクエストのユーザーとContactに紐づくUserが紐づかない場合はステータスコード403を返す
         $this->authorize('view', $contact);
 
-        return $contact;
+        return new ContactResource($contact);
     }
 
     /**
