@@ -19,6 +19,16 @@ class Contact extends Model
     }
 
     /**
+     * urlを生成
+     *
+     * @return \Illuminate\Contracts\Routing\UrlGenerator|string
+     */
+    public function path()
+    {
+        return url('/contact/' . $this->id);
+    }
+
+    /**
      * Contactに紐づくUserを取得
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

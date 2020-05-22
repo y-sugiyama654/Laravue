@@ -7,6 +7,7 @@ use App\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 
 class ContactsTest extends TestCase
@@ -56,7 +57,7 @@ class ContactsTest extends TestCase
     /** @test */
     public function an_unauthenticated_user_can_add_a_contact()
     {
-        $this->post('/api/contacts', $this->data());
+        $response = $this->post('/api/contacts', $this->data());
 
         $contact = Contact::first();
 
@@ -64,6 +65,16 @@ class ContactsTest extends TestCase
         $this->assertEquals('test@gmail.com', $contact->email);
         $this->assertEquals('05/15/2020', $contact->birthday->format('m/d/Y'));
         $this->assertEquals('ABC Company', $contact->company);
+        $response->assertStatus(Response::HTTP_CREATED);
+        // レスポンスAPIが引数のデータと一致していること
+        $response->assertJson([
+            'data' => [
+                'contact_id' => $contact->id,
+            ],
+            'links' => [
+                'self' => url('/contact/' . $contact->id)
+            ]
+        ]);
     }
 
     /** @test */
