@@ -2,7 +2,7 @@ module.exports = {
   purge: [],
   theme: {
     extend: {
-        '96': '24rem',
+        '96': '40rem',
     },
   },
   variants: {},
