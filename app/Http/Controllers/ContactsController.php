@@ -81,6 +81,11 @@ class ContactsController extends Controller
         ];
 
         $contact->update($updateData);
+
+        // 保存したContactのAPIリソースとステータスコード200を返す
+        return (new ContactResource($contact))
+            ->response()
+            ->setStatusCode(Response::HTTP_OK);
     }
 
     /**
@@ -95,5 +100,8 @@ class ContactsController extends Controller
         $this->authorize('delete', $contact);
 
         $contact->delete();
+
+        // 削除後にステータスコード204を返す
+        return response([], Response::HTTP_NO_CONTENT);
     }
 }

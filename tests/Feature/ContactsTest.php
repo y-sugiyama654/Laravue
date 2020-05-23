@@ -40,7 +40,11 @@ class ContactsTest extends TestCase
         $response->assertJsonCount(1)
             ->assertJson([
                 'data' => [
-                    ['contact_id' => $contact->id]
+                    [
+                        'data' => [
+                            'contact_id' => $contact->id
+                        ]
+                    ]
                 ]
             ]);
     }
@@ -72,7 +76,7 @@ class ContactsTest extends TestCase
                 'contact_id' => $contact->id,
             ],
             'links' => [
-                'self' => url('/contact/' . $contact->id)
+                'self' => $contact->path(),
             ]
         ]);
     }
@@ -172,7 +176,7 @@ class ContactsTest extends TestCase
         // }
 
         // patchメソッドで取得したデータを第二引数のデータに編集
-        $this->patch('/api/contacts/' . $contact->id, $this->data());
+        $response = $this->patch('/api/contacts/' . $contact->id, $this->data());
 
         // 編集後のcontactデータ
         // App\User
@@ -192,6 +196,16 @@ class ContactsTest extends TestCase
         $this->assertEquals('test@gmail.com', $contact->email);
         $this->assertEquals('05/15/2020', $contact->birthday->format('m/d/Y'));
         $this->assertEquals('ABC Company', $contact->company);
+        // レスポンスコードHTTP_OK(200)を返すこと
+        $response->assertStatus(Response::HTTP_OK);
+        $response->assertJson([
+            'data' => [
+                'contact_id' => $contact->id,
+            ],
+            'links' => [
+                'self' => $contact->path(),
+            ]
+        ]);
     }
 
     /** @test */
@@ -217,10 +231,12 @@ class ContactsTest extends TestCase
         $contact = factory(Contact::class)->create(['user_id' => $this->user->id]);
 
         // deleteメソッドを送信してContactを削除
-        $this->delete('/api/contacts/' . $contact->id, ['api_token' => $this->user->api_token]);
+        $response = $this->delete('/api/contacts/' . $contact->id, ['api_token' => $this->user->api_token]);
 
         // contactテーブルにデータが存在しないこと
         $this->assertCount(0, Contact::all());
+
+        $response->assertStatus(Response::HTTP_NO_CONTENT);
     }
 
     /** @test */
