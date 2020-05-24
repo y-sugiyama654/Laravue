@@ -1,6 +1,7 @@
 <template>
     <div class="h-screen bg-white">
         <div class="flex">
+            <!-- レフトサイド -->
             <div class="pl-6 pt-3 bg-blue-800 w-1/6 h-screen border-r-2 border-gray-400">
 
                 <router-link to="/">
@@ -32,10 +33,29 @@
                 </router-link>
 
             </div>
-            <div>
-                <div></div>
-                <div></div>
+
+
+            <!-- ライトサイド -->
+            <div class="flex flex-col flex-1 h-screen overflow-y-hidden">
+
+                <!-- ヘッダー -->
+                <div class="h-16 px-6 border-b border-gray-400 flex items-center justify-between">
+                    <div>
+                        Contacts
+                    </div>
+                    <div class="rounded-full border  text-white bg-blue-400 w-10 h-10 flex justify-center items-center">
+                        VG
+                    </div>
+                </div>
+
+                <!-- メインコンテンツ -->
+                <div class="flex flex-col overflow-y-hidden flex-1">
+                    <router-view class="p-6 overflow-x-hidden">
+
+                    </router-view>
+                </div>
             </div>
+
         </div>
 
     </div>
