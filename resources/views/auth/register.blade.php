@@ -53,12 +53,12 @@
                 </div>
             </div>
 
-            {{-- Password入力フォーム --}}
+            {{-- Password再入力フォーム --}}
             <div class="relative pt-3">
                 <label for="password-confirm" class="uppercase text-blue-500 text-xs font-bold absolute pl-3 pt-2">Re-Enter Password</label>
 
                 <div>
-                    <input id="password-confirm" type="password-confirm"  class="pt-8 w-full rounded pb-2 pl-3 bg-blue-800 text-gray-100 outline-none focus:bg-blue-700" name="password" autocomplete="current-password" placeholder="Confirm">
+                    <input id="password-confirm" type="password"  class="pt-8 w-full rounded pb-2 pl-3 bg-blue-800 text-gray-100 outline-none focus:bg-blue-700" name="password_confirmation" placeholder="Confirm">
 
                     @error('password-confirm')
                         <span class="text-red-600 text-sm pt-1" role="alert"><strong>{{ $message }}</strong></span>
