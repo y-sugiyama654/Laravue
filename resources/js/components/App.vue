@@ -64,11 +64,9 @@
 <script>
     export default {
         name: "App",
-
         props: [
             'user'
         ],
-
         created() {
             window.axios.interceptors.request.use(
                 (config) => {
