@@ -63,7 +63,24 @@
 
 <script>
     export default {
-        name: "App"
+        name: "App",
+
+        props: [
+            'user'
+        ],
+
+        created() {
+            window.axios.interceptors.request.use(
+                (config) => {
+                    config.data = {
+                        ...config.data,
+                        api_token: this.user.api_token
+                    };
+
+                    return config;
+                }
+            )
+        }
     }
 </script>
 
