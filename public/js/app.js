@@ -2160,6 +2160,11 @@ __webpack_require__.r(__webpack_exports__);
       value: ''
     };
   },
+  computed: {
+    hasError: function hasError() {
+      return this.errors && this.errors[this.name] && this.errors[this.name].length > 0;
+    }
+  },
   methods: {
     updateField: function updateField() {
       // エラーメッセージを非表示にする
@@ -2168,20 +2173,20 @@ __webpack_require__.r(__webpack_exports__);
     },
     errorMessage: function errorMessage() {
       // エラ〜メッセージを返す
-      if (this.errors && this.errors[this.name] && this.errors[this.name].length > 0) {
+      if (this.hasError) {
         return this.errors[this.name][0];
       }
     },
     clearErrors: function clearErrors() {
       // エラーメッセージをクリア
-      if (this.errors && this.errors[this.name] && this.errors[this.name].length > 0) {
+      if (this.hasError) {
         this.errors[this.name] = null;
       }
     },
     errorClassObject: function errorClassObject() {
       // errorが含まれる時に.error-fieldを付与
       return {
-        'error-field': this.errors && this.errors[this.name] && this.errors[this.name].length > 0
+        'error-field': this.hasError
       };
     }
   }
