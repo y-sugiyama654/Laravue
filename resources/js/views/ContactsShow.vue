@@ -4,10 +4,18 @@
         <div v-else>
             <div class="flex justify-between">
                 <div class="text-blue-400">< Back</div>
-                <div>
+                <div class="relative">
                     <router-link :to="'/contact/' + contact.contact_id + '/edit'" class="px-4 py-2 rounded text-green-500 border font-bold mr-2">Edit</router-link>
-                    <a href="#" class="px-4 py-2 rounded text-red-500 border font-bold">Delete</a>
+                    <a href="#" class="px-4 py-2 rounded text-red-500 border font-bold" @click="modal = ! modal">Delete</a>
+                    <div v-if="modal" class="absolute bg-blue-900 text-white rounded-lg z-20 p-6 w-64 right-0 mt-3 mr-6">
+                        <p>Are you sure you want to delete this record?</p>
+                        <div class="flex items-center mt-4 justify-end">
+                            <button class="text-white pr-4" @click="modal = ! modal">Cancel</button>
+                            <button class="px-4 py-2 bg-red-500 rounded text-sm font-bold text-white" @click="destroy" >Delete</button>
+                        </div>
+                    </div>
                 </div>
+                <div v-if="modal" class="bg-black opacity-50 absolute right-0 left-0 top-0 bottom-0 z-10" @click="modal = ! modal"></div>
             </div>
 
             <div class="flex items-center pt-6">
@@ -43,12 +51,28 @@
                 })
                 .catch(error => {
                     this.loading = false;
+
+                    if (error.response.status === 404) {
+                        this.$router.push('/contacts');
+                    }
                 });
         },
         data: function () {
             return {
                 loading: true,
+                modal: false,
                 contact: null,
+            }
+        },
+        methods: {
+            destroy: function() {
+                axios.delete('/api/contacts/' + this.$route.params.id)
+                    .then(response => {
+                        this.$router.push('/contacts');
+                    })
+                    .catch(error => {
+                        alert('Internal Error. Unable to delete contact.');
+                    });
             }
         }
     }
