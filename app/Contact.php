@@ -25,7 +25,7 @@ class Contact extends Model
      */
     public function path()
     {
-        return url('/contact/' . $this->id);
+        return '/contacts/' . $this->id;
     }
 
     /**

@@ -2278,7 +2278,9 @@ __webpack_require__.r(__webpack_exports__);
     submitForm: function submitForm() {
       var _this = this;
 
-      axios.post('/api/contacts', this.form).then(function (response) {})["catch"](function (errors) {
+      axios.post('/api/contacts', this.form).then(function (response) {
+        _this.$router.push(response.data.links.self);
+      })["catch"](function (errors) {
         _this.errors = errors.response.data.errors;
       });
     }
@@ -2324,6 +2326,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "ContactsShow.vue",
@@ -2335,10 +2340,14 @@ __webpack_require__.r(__webpack_exports__);
 
     axios.get('/api/contacts/' + this.$route.params.id).then(function (response) {
       _this.contact = response.data.data;
-    })["catch"](function (error) {});
+      _this.loading = false;
+    })["catch"](function (error) {
+      _this.loading = false;
+    });
   },
   data: function data() {
     return {
+      loading: true,
       contact: null
     };
   }
@@ -39324,71 +39333,84 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", [
-    _c("div", { staticClass: "flex justify-between" }, [
-      _c("div", { staticClass: "text-blue-400" }, [_vm._v("< Back")]),
-      _vm._v(" "),
-      _c(
-        "div",
-        [
+    _vm.loading
+      ? _c("div", [_vm._v("Loading...")])
+      : _c("div", [
+          _c("div", { staticClass: "flex justify-between" }, [
+            _c("div", { staticClass: "text-blue-400" }, [_vm._v("< Back")]),
+            _vm._v(" "),
+            _c(
+              "div",
+              [
+                _c(
+                  "router-link",
+                  {
+                    staticClass:
+                      "px-4 py-2 rounded text-green-500 border font-bold mr-2",
+                    attrs: {
+                      to: "/contact/" + _vm.contact.contact_id + "/edit"
+                    }
+                  },
+                  [_vm._v("Edit")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "a",
+                  {
+                    staticClass:
+                      "px-4 py-2 rounded text-red-500 border font-bold",
+                    attrs: { href: "#" }
+                  },
+                  [_vm._v("Delete")]
+                )
+              ],
+              1
+            )
+          ]),
+          _vm._v(" "),
           _c(
-            "router-link",
-            {
-              staticClass:
-                "px-4 py-2 rounded text-green-500 border font-bold mr-2",
-              attrs: { to: "/contact/" + _vm.contact.contact_id + "/edit" }
-            },
-            [_vm._v("Edit")]
+            "div",
+            { staticClass: "flex items-center pt-6" },
+            [
+              _c("UserCircle", { attrs: { name: _vm.contact.name } }),
+              _vm._v(" "),
+              _c("p", { staticClass: "pl-3 text-xl" }, [
+                _vm._v(_vm._s(_vm.contact.name))
+              ])
+            ],
+            1
           ),
           _vm._v(" "),
           _c(
-            "a",
-            {
-              staticClass: "px-4 py-2 rounded text-red-500 border font-bold",
-              attrs: { href: "#" }
-            },
-            [_vm._v("Delete")]
-          )
-        ],
-        1
-      )
-    ]),
-    _vm._v(" "),
-    _c(
-      "div",
-      { staticClass: "flex items-center pt-6" },
-      [
-        _c("UserCircle", { attrs: { name: _vm.contact.name } }),
-        _vm._v(" "),
-        _c("p", { staticClass: "pl-5 text-xl" }, [
-          _vm._v(_vm._s(_vm.contact.name))
+            "p",
+            { staticClass: "pt-6 text-gray-600 font-bold uppercase text-sm" },
+            [_vm._v("Contact")]
+          ),
+          _vm._v(" "),
+          _c("p", { staticClass: "pt-2 text-blue-500" }, [
+            _vm._v(_vm._s(_vm.contact.email))
+          ]),
+          _vm._v(" "),
+          _c(
+            "p",
+            { staticClass: "pt-6 text-gray-600 font-bold uppercase text-sm" },
+            [_vm._v("Company")]
+          ),
+          _vm._v(" "),
+          _c("p", { staticClass: "pt-2 text-blue-500" }, [
+            _vm._v(_vm._s(_vm.contact.company))
+          ]),
+          _vm._v(" "),
+          _c(
+            "p",
+            { staticClass: "pt-6 text-gray-600 font-bold uppercase text-sm" },
+            [_vm._v("Birthday")]
+          ),
+          _vm._v(" "),
+          _c("p", { staticClass: "pt-2 text-blue-500" }, [
+            _vm._v(_vm._s(_vm.contact.birthday))
+          ])
         ])
-      ],
-      1
-    ),
-    _vm._v(" "),
-    _c("p", { staticClass: "pt-6 text-gray-600 font-bold uppercase text-sm" }, [
-      _vm._v("Contact")
-    ]),
-    _vm._v(" "),
-    _c("p", { staticClass: "pt-2 text-blue-500" }, [
-      _vm._v(_vm._s(_vm.contact.email))
-    ]),
-    _vm._v(" "),
-    _c("p", { staticClass: "pt-6 text-gray-600 font-bold uppercase text-sm" }, [
-      _vm._v("Company")
-    ]),
-    _vm._v(" "),
-    _c("p", { staticClass: "pt-2 text-blue-500" }, [
-      _vm._v(_vm._s(_vm.contact.company))
-    ]),
-    _vm._v(" "),
-    _c("p", { staticClass: "pt-6 text-gray-600 font-bold uppercase text-sm" }, [
-      _vm._v("Birthday")
-    ]),
-    _vm._v(" "),
-    _c("p", { staticClass: "pt-2 text-blue-500" }, [
-      _vm._v(_vm._s(_vm.contact.birthday))
-    ])
   ])
 }
 var staticRenderFns = []
