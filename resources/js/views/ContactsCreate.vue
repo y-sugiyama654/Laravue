@@ -38,9 +38,11 @@
             submitForm: function () {
                 axios.post('/api/contacts', this.form)
                     .then(response => {
+                        alert('here');
                         this.$router.push(response.data.links.self);
                     })
                     .catch(errors => {
+                        alert('error');
                         this.errors = errors.response.data.errors;
                     });
             }
