@@ -43,9 +43,7 @@
                     <div>
                         Contacts
                     </div>
-                    <div class="rounded-full border  text-white bg-blue-400 w-10 h-10 flex justify-center items-center">
-                        VG
-                    </div>
+                    <UserCircle :name="user.name"/>
                 </div>
 
                 <!-- メインコンテンツ -->
@@ -62,11 +60,17 @@
 </template>
 
 <script>
+    import UserCircle from "./UserCircle";
     export default {
         name: "App",
         props: [
             'user'
         ],
+
+        components: {
+            UserCircle
+        },
+
         created() {
             window.axios.interceptors.request.use(
                 (config) => {
