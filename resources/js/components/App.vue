@@ -43,7 +43,12 @@
                     <div>
                         Contacts
                     </div>
-                    <UserCircle :name="user.name"/>
+
+                    <div class="flex items-center">
+                        <SearchBar />
+                        <UserCircle :name="user.name"/>
+                    </div>
+
                 </div>
 
                 <!-- メインコンテンツ -->
@@ -61,6 +66,7 @@
 
 <script>
     import UserCircle from "./UserCircle";
+    import SearchBar from "../components/SearchBar";
     export default {
         name: "App",
         props: [
@@ -68,7 +74,8 @@
         ],
 
         components: {
-            UserCircle
+            UserCircle,
+            SearchBar,
         },
 
         created() {
