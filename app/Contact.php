@@ -29,6 +29,17 @@ class Contact extends Model
     }
 
     /**
+     * 現在月と一致する誕生月のcontact情報を取得して返す
+     *
+     * @param $query
+     * @return mixed
+     */
+    public function scopeBirthdays($query)
+    {
+        return $query->whereRaw('birthday like "%-' . now()->format('m') . '-%"');
+    }
+
+    /**
      * Contactに紐づくUserを取得
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
