@@ -41,9 +41,14 @@
                 <!-- ヘッダー -->
                 <div class="h-16 px-6 border-b border-gray-400 flex items-center justify-between">
                     <div>
-                        Contacts
+                        {{ title }}
                     </div>
-                    <UserCircle :name="user.name"/>
+
+                    <div class="flex items-center">
+                        <SearchBar />
+                        <UserCircle :name="user.name"/>
+                    </div>
+
                 </div>
 
                 <!-- メインコンテンツ -->
@@ -61,17 +66,18 @@
 
 <script>
     import UserCircle from "./UserCircle";
+    import SearchBar from "../components/SearchBar";
     export default {
         name: "App",
         props: [
             'user'
         ],
-
         components: {
-            UserCircle
+            UserCircle,
+            SearchBar,
         },
-
         created() {
+            this.title = this.$route.meta.title;
             window.axios.interceptors.request.use(
                 (config) => {
                     if (config.method === 'get') {
@@ -85,6 +91,19 @@
                     return config;
                 }
             )
+        },
+        data: function() {
+            return {
+                title: '',
+            }
+        },
+        watch: {
+            $route(to, from) {
+                this.title = to.meta.title;
+            },
+            title() {
+                document.title = this.title + ' | LaraVue - The SPA App'
+            }
         }
     }
 </script>
