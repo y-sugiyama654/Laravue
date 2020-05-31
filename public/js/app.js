@@ -1994,6 +1994,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   created: function created() {
     var _this = this;
 
+    this.title = this.$route.meta.title;
     window.axios.interceptors.request.use(function (config) {
       if (config.method === 'get') {
         config.url = config.url + '?api_token=' + _this.user.api_token;
@@ -2005,6 +2006,19 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       return config;
     });
+  },
+  data: function data() {
+    return {
+      title: ''
+    };
+  },
+  watch: {
+    $route: function $route(to, from) {
+      this.title = to.meta.title;
+    },
+    title: function title() {
+      document.title = this.title + ' | LaraVue - The SPA App';
+    }
   }
 });
 
@@ -39181,7 +39195,11 @@ var render = function() {
             },
             [
               _c("div", [
-                _vm._v("\n                    Contacts\n                ")
+                _vm._v(
+                  "\n                    " +
+                    _vm._s(_vm.title) +
+                    "\n                "
+                )
               ]),
               _vm._v(" "),
               _c(
@@ -55841,22 +55859,40 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_router__WEBPACK_IMPORTED_MODU
 /* harmony default export */ __webpack_exports__["default"] = (new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
   routes: [{
     path: '/',
-    component: _components_ExampleComponent__WEBPACK_IMPORTED_MODULE_2__["default"]
+    component: _components_ExampleComponent__WEBPACK_IMPORTED_MODULE_2__["default"],
+    meta: {
+      title: 'Welcome'
+    }
   }, {
     path: '/contacts',
-    component: _views_ContactsIndex__WEBPACK_IMPORTED_MODULE_6__["default"]
+    component: _views_ContactsIndex__WEBPACK_IMPORTED_MODULE_6__["default"],
+    meta: {
+      title: 'Contacts'
+    }
   }, {
     path: '/contacts/create',
-    component: _views_ContactsCreate__WEBPACK_IMPORTED_MODULE_3__["default"]
+    component: _views_ContactsCreate__WEBPACK_IMPORTED_MODULE_3__["default"],
+    meta: {
+      title: 'Add New Contact'
+    }
   }, {
     path: '/contacts/:id',
-    component: _views_ContactsShow__WEBPACK_IMPORTED_MODULE_4__["default"]
+    component: _views_ContactsShow__WEBPACK_IMPORTED_MODULE_4__["default"],
+    meta: {
+      title: 'Details for Contact'
+    }
   }, {
     path: '/contacts/:id/edit',
-    component: _views_ContactsEdit__WEBPACK_IMPORTED_MODULE_5__["default"]
+    component: _views_ContactsEdit__WEBPACK_IMPORTED_MODULE_5__["default"],
+    meta: {
+      title: 'Edit Contact'
+    }
   }, {
     path: '/birthdays',
-    component: _views_BirthdaysIndex__WEBPACK_IMPORTED_MODULE_7__["default"]
+    component: _views_BirthdaysIndex__WEBPACK_IMPORTED_MODULE_7__["default"],
+    meta: {
+      title: 'This Month\'s Birthdays'
+    }
   }],
   mode: 'history'
 }));
